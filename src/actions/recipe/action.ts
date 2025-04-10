@@ -6,7 +6,7 @@ import { z } from "zod";
 import { fetchUnsplashImages } from "@/lib/unsplash-fetcher";
 import { unsplashFetch } from "@/lib/flags";
 
-// Define the recipe schema matching the interface from use-recipe.ts
+
 const recipeSchema = z.object({
   recipes: z.array(
     z.object({
@@ -36,13 +36,13 @@ export async function generateRecipesFromIngredients(ingredients: string[]): Pro
       };
     }
 
-    // Initialize the ChatOpenAI model
+  
     const model = new ChatOpenAI({
       modelName: "gpt-4o-search-preview",
       maxTokens: 2048,
     });
 
-    // Create system and human messages
+    
     const systemMessage = new SystemMessage(
       "You are a creative culinary expert specialized in generating Filipino recipes from available ingredients. " +
       "Create diverse, practical recipes using the provided ingredients. You can suggest additional common ingredients " +
@@ -55,7 +55,7 @@ export async function generateRecipesFromIngredients(ingredients: string[]): Pro
       "possibly adding a few common ingredients I might have in my pantry."
     );
 
-    // Invoke the model with structured output
+   
     const response = await model
       .withStructuredOutput(recipeSchema)
       .invoke([systemMessage, humanMessage]);
