@@ -4,6 +4,7 @@ import { Input } from "@heroui/react";
 import { useState, type ChangeEvent, useEffect } from "react";
 import { extractIngredientsFromImage } from "@/actions/ingredients/action";
 import { useRecipe } from "@/store/use-recipe";
+import { usePreferences } from "@/store/use-preferences";
 
 interface ImageUploaderProps {
     onImageUploaded?: () => void;
@@ -17,7 +18,8 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
     const { setIngredients, generateRecipes } = useRecipe();
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
+    const { goal, dietaryPreferences, allergies } = usePreferences();
+    
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
@@ -54,7 +56,11 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
                     
                     setLoadingProgress(66);
                     setLoadingMessage("Generating delicious recipes...");
-                    await generateRecipes(result.ingredients);
+                    await generateRecipes(result.ingredients, {
+                        goal: goal,
+                        dietaryPreferences: dietaryPreferences,
+                        allergies: allergies
+                    });
                     
                     
                     setLoadingProgress(100);

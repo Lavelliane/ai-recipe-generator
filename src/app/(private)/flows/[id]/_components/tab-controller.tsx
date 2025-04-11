@@ -5,6 +5,7 @@ import ImageUploader from './image-uploader';
 import { Button } from '@heroui/react';
 import { RecipeSuggestions } from '@/components/RecipeSuggestions';
 import { useRecipe } from '@/store/use-recipe';
+import { usePreferences } from '@/store/use-preferences';
 
 type Step = {
     label: string;
@@ -16,6 +17,8 @@ export default function TabController() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const { recipes } = useRecipe();
+    const { goal, dietaryPreferences, allergies } = usePreferences();
+    console.log(goal, dietaryPreferences, allergies);
     
     
     const currentStep = Number(searchParams.get('step') || '1');

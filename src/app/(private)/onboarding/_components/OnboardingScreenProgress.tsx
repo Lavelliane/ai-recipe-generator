@@ -1,24 +1,29 @@
 'use client';
 import { Progress } from '@heroui/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@heroui/react'
+import { usePreferences } from '@/store/use-preferences'
 
 const OnboardingScreenProgress = () => {
   const [step, setStep] = useState<'goals' | 'preferences' | 'allergies'>('goals')
-  const [selectedGoal, setSelectedGoal] = useState<string>('')
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>([])
-  const [allergies, setAllergies] = useState<string>('')
   const router = useRouter()
+  const { 
+    goal, 
+    dietaryPreferences, 
+    allergies, 
+    setGoal, 
+    toggleDietaryPreference, 
+    setAllergies 
+  } = usePreferences()
 
   const handleNext = () => {
-    if (step === 'goals' && selectedGoal) {
+    if (step === 'goals' && goal) {
       setStep('preferences')
     } else if (step === 'preferences') {
       setStep('allergies')
     } else if (step === 'allergies') {
-      
-      router.push('/onboarding/final')
+      router.push('/flows/123')
     }
   }
 
@@ -28,14 +33,6 @@ const OnboardingScreenProgress = () => {
     } else if (step === 'allergies') {
       setStep('preferences')
     }
-  }
-
-  const togglePreference = (preference: string) => {
-    setSelectedPreferences(prev => 
-      prev.includes(preference)
-        ? prev.filter(p => p !== preference)
-        : [...prev, preference]
-    )
   }
 
   const getProgressValue = () => {
@@ -66,9 +63,9 @@ const OnboardingScreenProgress = () => {
           
           <div className="flex flex-col gap-4 mb-8">
             <button 
-              onClick={() => setSelectedGoal('cook-with-ingredients')}
+              onClick={() => setGoal('cook-with-ingredients')}
               className={`w-full py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedGoal === 'cook-with-ingredients' 
+                goal === 'cook-with-ingredients' 
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -77,9 +74,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => setSelectedGoal('quick-recipes')}
+              onClick={() => setGoal('quick-recipes')}
               className={`w-full py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedGoal === 'quick-recipes' 
+                goal === 'quick-recipes' 
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -88,9 +85,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => setSelectedGoal('healthy-meals')}
+              onClick={() => setGoal('healthy-meals')}
               className={`w-full py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedGoal === 'healthy-meals' 
+                goal === 'healthy-meals' 
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -99,9 +96,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => setSelectedGoal('shopping-list')}
+              onClick={() => setGoal('shopping-list')}
               className={`w-full py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedGoal === 'shopping-list' 
+                goal === 'shopping-list' 
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -110,9 +107,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => setSelectedGoal('improve-skills')}
+              onClick={() => setGoal('improve-skills')}
               className={`w-full py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedGoal === 'improve-skills' 
+                goal === 'improve-skills' 
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -127,9 +124,9 @@ const OnboardingScreenProgress = () => {
           
           <div className="grid grid-cols-2 gap-4 mb-8">
             <button 
-              onClick={() => togglePreference('vegetarian-vegan')}
+              onClick={() => toggleDietaryPreference('vegetarian-vegan')}
               className={`py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedPreferences.includes('vegetarian-vegan')
+                dietaryPreferences.includes('vegetarian-vegan')
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -138,9 +135,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => togglePreference('no-preference')}
+              onClick={() => toggleDietaryPreference('no-preference')}
               className={`py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedPreferences.includes('no-preference')
+                dietaryPreferences.includes('no-preference')
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -149,9 +146,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => togglePreference('keto-lowcarb')}
+              onClick={() => toggleDietaryPreference('keto-lowcarb')}
               className={`py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedPreferences.includes('keto-lowcarb')
+                dietaryPreferences.includes('keto-lowcarb')
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -160,9 +157,9 @@ const OnboardingScreenProgress = () => {
             </button>
 
             <button 
-              onClick={() => togglePreference('gluten-dairy-free')}
+              onClick={() => toggleDietaryPreference('gluten-dairy-free')}
               className={`py-4 px-6 rounded-full text-lg transition-colors ${
-                selectedPreferences.includes('gluten-dairy-free')
+                dietaryPreferences.includes('gluten-dairy-free')
                   ? 'bg-primary text-white hover:bg-orange-500' 
                   : 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-200'
               }`}
@@ -200,9 +197,9 @@ const OnboardingScreenProgress = () => {
         <div className={step !== 'goals' ? 'ml-auto' : ''}>
           <button
             onClick={handleNext}
-            disabled={step === 'goals' ? !selectedGoal : false}
+            disabled={step === 'goals' ? !goal : false}
             className={`px-8 py-3 rounded-full text-white font-medium transition-colors ${
-              (step === 'goals' && selectedGoal) || step === 'preferences' || (step === 'allergies' && allergies.trim())
+              (step === 'goals' && goal) || step === 'preferences' || (step === 'allergies' && allergies.trim())
                 ? 'bg-primary hover:bg-orange-500' 
                 : 'bg-gray-300 cursor-not-allowed'
             }`}
