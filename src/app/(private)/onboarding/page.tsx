@@ -1,11 +1,11 @@
-import TabController from "./_components/tab-controller";
+import OnboardingWelcome from "./_components/OnboardingWelcome";
 
-export default async function FlowsPage() {
+export default function OnboardingPage() {
     
     return (
         <div className="bg-white h-screen w-full ">
             <div className="flex items-center justify-center py-8">
-                <TabController />
+                <OnboardingWelcome />
             </div>
         </div>
     )

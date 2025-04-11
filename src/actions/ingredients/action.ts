@@ -21,18 +21,18 @@ export async function extractIngredientsFromImage(formData: FormData) {
             };
         }
 
-        // Convert file to base64
+       
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
         const base64Data = buffer.toString('base64');
 
-        // Initialize the ChatOpenAI model with GPT-4-Vision
+        
         const model = new ChatOpenAI({
             modelName: "gpt-4o",
             maxTokens: 1024,
         });
 
-        // Create the system and human messages with image
+       
         const systemMessage = new SystemMessage(
             "You are a helpful assistant specialized in identifying ingredients from recipe images. " +
             "Extract and list all ingredients visible in the image. Format the response as a JSON array of strings."
@@ -54,16 +54,16 @@ export async function extractIngredientsFromImage(formData: FormData) {
             content: [textContent, imageContent],
         });
 
-        // Invoke the model
+        
         const response = await model.withStructuredOutput(extractIngredientsSchema).invoke([systemMessage, humanMessage]);
 
-        // Parse the response to extract ingredients
+        
         let ingredients: string[] = [];
         try {
-            // Try to parse as JSON if the model returned JSON
+           
             ingredients = response.ingredients;
         } catch (e) {
-            // If not JSON, extract as plain text and create an array
+            
             console.error(e);
         }
 
@@ -82,4 +82,3 @@ export async function extractIngredientsFromImage(formData: FormData) {
         };
     }
 }
-

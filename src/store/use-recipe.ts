@@ -19,7 +19,7 @@ interface RecipeStore {
   setRecipe: (recipe: Recipe) => void;
   setIngredients: (ingredients: string[]) => void;
   clearRecipe: () => void;
-  generateRecipes: (ingredients: string[]) => Promise<void>;
+  generateRecipes: (ingredients: string[], preferences: { goal: string, dietaryPreferences: string[], allergies: string }) => Promise<void>;
 }
 
 export const useRecipe = create<RecipeStore>((set) => ({
@@ -31,10 +31,10 @@ export const useRecipe = create<RecipeStore>((set) => ({
   setRecipe: (recipe) => set({ recipe }),
   clearRecipe: () => set({ recipe: null }),
   setIngredients: (ingredients: string[]) => set({ ingredients }),
-  generateRecipes: async (ingredients) => {
+  generateRecipes: async (ingredients, preferences) => {
     try {
       set({ loading: true, error: null });
-      const response = await generateRecipesFromIngredients(ingredients);
+      const response = await generateRecipesFromIngredients(ingredients, preferences);
       
       if (response.success && response.recipes) {
         set({ 

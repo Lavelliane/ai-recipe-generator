@@ -6,7 +6,7 @@ import { z } from "zod";
 import { fetchUnsplashImages } from "@/lib/unsplash-fetcher";
 import { unsplashFetch } from "@/lib/flags";
 
-// Define the recipe schema matching the interface from use-recipe.ts
+
 const recipeSchema = z.object({
   recipes: z.array(
     z.object({
@@ -26,7 +26,7 @@ export type GenerateRecipesResponse = {
   error?: string;
 };
 
-export async function generateRecipesFromIngredients(ingredients: string[]): Promise<GenerateRecipesResponse> {
+export async function generateRecipesFromIngredients(ingredients: string[], preferences: { goal: string, dietaryPreferences: string[], allergies: string }): Promise<GenerateRecipesResponse> {
   try {
     if (!ingredients || ingredients.length === 0) {
       return {
@@ -36,13 +36,13 @@ export async function generateRecipesFromIngredients(ingredients: string[]): Pro
       };
     }
 
-    // Initialize the ChatOpenAI model
+  
     const model = new ChatOpenAI({
       modelName: "gpt-4o-search-preview",
       maxTokens: 2048,
     });
 
-    // Create system and human messages
+    
     const systemMessage = new SystemMessage(
       "You are a creative culinary expert specialized in generating Filipino recipes from available ingredients. " +
       "Create diverse, practical recipes using the provided ingredients. You can suggest additional common ingredients " +
@@ -51,11 +51,11 @@ export async function generateRecipesFromIngredients(ingredients: string[]): Pro
 
     const ingredientsList = ingredients.join(", ");
     const humanMessage = new HumanMessage(
-      `I have the following ingredients: ${ingredientsList}. Please suggest 3 recipes I could make with these ingredients, ` +
-      "possibly adding a few common ingredients I might have in my pantry."
+      `I have the following ingredients: ${ingredientsList}. Please suggest 3 recipes I could make with these ingredients, The preferences are my dietary preferences: ${JSON.stringify(preferences)}.` +
+      "possibly adding a few common ingredients I might have in my pantry. "
     );
 
-    // Invoke the model with structured output
+   
     const response = await model
       .withStructuredOutput(recipeSchema)
       .invoke([systemMessage, humanMessage]);
