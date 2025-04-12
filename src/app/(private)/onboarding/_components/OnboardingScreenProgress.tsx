@@ -1,12 +1,15 @@
 'use client';
 import { Progress } from '@heroui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@heroui/react'
 import { usePreferences } from '@/store/use-preferences'
+import { storeUserPreferences } from '@/actions/preferences/store-preference'
 
 const OnboardingScreenProgress = () => {
+
   const [step, setStep] = useState<'goals' | 'preferences' | 'allergies'>('goals')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
   const { 
     goal, 
@@ -17,13 +20,34 @@ const OnboardingScreenProgress = () => {
     setAllergies 
   } = usePreferences()
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'goals' && goal) {
       setStep('preferences')
     } else if (step === 'preferences') {
       setStep('allergies')
     } else if (step === 'allergies') {
-      router.push('/flows/123')
+      try {
+        setIsSubmitting(true)
+        
+        // Store user preferences
+        const result = await storeUserPreferences({
+          goal,
+          dietaryPreferences,
+          allergies
+        })
+        
+        if (result.success) {
+          router.push('/flows/123')
+        } else {
+          // Handle error case
+          console.error('Failed to save preferences:', result.error)
+          // You might want to show an error message to the user
+        }
+      } catch (error) {
+        console.error('Error saving preferences:', error)
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -190,6 +214,7 @@ const OnboardingScreenProgress = () => {
           <button
             onClick={handleBack}
             className="px-8 py-3 rounded-full text-gray-800 font-medium border border-gray-200 hover:bg-gray-100 transition-colors"
+            disabled={isSubmitting}
           >
             Back
           </button>
@@ -197,14 +222,14 @@ const OnboardingScreenProgress = () => {
         <div className={step !== 'goals' ? 'ml-auto' : ''}>
           <button
             onClick={handleNext}
-            disabled={step === 'goals' ? !goal : false}
+            disabled={(step === 'goals' ? !goal : false) || isSubmitting}
             className={`px-8 py-3 rounded-full text-white font-medium transition-colors ${
-              (step === 'goals' && goal) || step === 'preferences' || (step === 'allergies' && allergies.trim())
+              ((step === 'goals' && goal) || step === 'preferences' || (step === 'allergies' && allergies.trim())) && !isSubmitting
                 ? 'bg-primary hover:bg-orange-500' 
                 : 'bg-gray-300 cursor-not-allowed'
             }`}
           >
-            {step === 'allergies' ? 'Save' : 'Next'}
+            {isSubmitting ? 'Saving...' : step === 'allergies' ? 'Save' : 'Next'}
           </button>
         </div>
       </div>
