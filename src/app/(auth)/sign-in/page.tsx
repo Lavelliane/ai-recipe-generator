@@ -30,7 +30,7 @@ export default function SignIn() {
       if (!exists) {
         router.push('/onboarding')
       } else {
-        router.push('/')
+        router.push('/dashboard')
       }
       router.refresh()
     } catch (err: any) {

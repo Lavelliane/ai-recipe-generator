@@ -37,7 +37,7 @@ const OnboardingScreenProgress = () => {
         })
         
         if (result.success) {
-          router.push('/flows/123')
+          router.push('/dashboard')
         } else {
           // Handle error case
           console.error('Failed to save preferences:', result.error)
