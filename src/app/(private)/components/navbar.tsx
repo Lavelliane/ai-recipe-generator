@@ -74,7 +74,9 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
           
             <button
-              onClick={handleGenerateRecipeClick}
+              onClick={() => {
+                router.push('/meal-plans/new')
+              }}
               className="flex items-center px-6 py-1.5 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-sm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">

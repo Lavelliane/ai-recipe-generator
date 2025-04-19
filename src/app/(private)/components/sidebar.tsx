@@ -19,8 +19,8 @@ export default function Sidebar() {
       icon: HomeIcon,
     },
     {
-      name: 'Recipes',
-      href: '/recipes',
+      name: 'Meal Plans',
+      href: '/meal-plans',
       icon: DocumentTextIcon,
     },
     {
