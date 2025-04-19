@@ -44,8 +44,9 @@ Current Step ({currentStep}): {stepInstruction}
 User Question: "{userQuery}"
 {dietaryInfo}
 
-Provide a single, clear paragraph of advice to help with this specific step. 
-Be direct and practical - your entire response should be 2-3 sentences maximum.`,
+Provide a single, clear paragraph of advice to help with this specific step.
+Convert symbols to text. For example, degrees symbol to "degrees".
+Be direct and practical - your entire response should be 2 sentences maximum.`,
       inputVariables: ["recipeName", "currentStep", "stepInstruction", "userQuery", "dietaryInfo"],
     });
 

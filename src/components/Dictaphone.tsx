@@ -4,21 +4,28 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 interface DictaphoneProps {
   onTranscriptChange?: (text: string) => void;
   onComplete?: () => void;
+  setVoiceTranscript?: (text: string) => void;
+  transcript: string;
+  listening: boolean;
+  resetTranscript: () => void;
+  browserSupportsSpeechRecognition: boolean;
 }
 
-const Dictaphone = ({ onTranscriptChange, onComplete }: DictaphoneProps) => {
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition
-  } = useSpeechRecognition();
-
+const Dictaphone = ({ onTranscriptChange, onComplete, setVoiceTranscript, transcript, listening, resetTranscript, browserSupportsSpeechRecognition }: DictaphoneProps) => {
   useEffect(() => {
     if (onTranscriptChange && transcript) {
       onTranscriptChange(transcript);
     }
   }, [transcript, onTranscriptChange]);
+
+  const handleClear = () => {
+    if(resetTranscript) {
+      resetTranscript();
+    }
+    if (setVoiceTranscript) {
+      setVoiceTranscript('');
+    }
+  };
 
   if (!browserSupportsSpeechRecognition) {
     return <div className="text-amber-700 bg-amber-50 p-3 rounded-lg">Browser doesn't support speech recognition.</div>;
@@ -33,7 +40,7 @@ const Dictaphone = ({ onTranscriptChange, onComplete }: DictaphoneProps) => {
         </div>
         {transcript && (
           <button 
-            onClick={resetTranscript} 
+            onClick={handleClear} 
             className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded-md border border-gray-200"
           >
             Clear

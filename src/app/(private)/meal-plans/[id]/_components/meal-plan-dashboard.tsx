@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { type DailyMeals, type Recipe } from '../utils/dummy';
 import { 
   Card, 
@@ -24,6 +24,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { getRecipeHelp } from '@/app/(private)/_actions/recipe-support/help';
+import { useSpeechRecognition } from 'react-speech-recognition';
 
 // Dynamically import Dictaphone with SSR disabled
 const Dictaphone = dynamic(
@@ -101,6 +102,13 @@ export default function MealPlanDashboard({ mealPlan, userPreferences, recipes }
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
+
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
 
   const handleVoiceComplete = async () => {
     setIsVoiceMode(true);
@@ -307,12 +315,18 @@ export default function MealPlanDashboard({ mealPlan, userPreferences, recipes }
   const handleNextStep = () => {
     if (selectedRecipe && currentRecipeStep < selectedRecipe.instructions.length - 1) {
       setCurrentRecipeStep(currentRecipeStep + 1);
+      setVoiceTranscript('');
+      setHelpResponse(null);
+      resetTranscript();
     }
   };
 
   const handlePreviousStep = () => {
     if (currentRecipeStep > 0) {
       setCurrentRecipeStep(currentRecipeStep - 1);
+      setVoiceTranscript('');
+      setHelpResponse(null);
+      resetTranscript();
     }
   };
 
@@ -325,6 +339,7 @@ export default function MealPlanDashboard({ mealPlan, userPreferences, recipes }
   const handleCloseVoiceAssistant = () => {
     setShowVoiceAssistant(false);
     setVoiceTranscript('');
+    resetTranscript();
   };
 
   const handleTranscriptUpdate = (text: string) => {
@@ -424,6 +439,11 @@ export default function MealPlanDashboard({ mealPlan, userPreferences, recipes }
               <Dictaphone 
                 onTranscriptChange={handleTranscriptUpdate} 
                 onComplete={handleVoiceComplete}
+                setVoiceTranscript={setVoiceTranscript}
+                transcript={transcript}
+                listening={listening}
+                resetTranscript={resetTranscript}
+                browserSupportsSpeechRecognition={browserSupportsSpeechRecognition}
               />
               
               {voiceTranscript && (
@@ -481,7 +501,7 @@ export default function MealPlanDashboard({ mealPlan, userPreferences, recipes }
             
             <Button
               variant="ghost"
-              onClick={handleNextStep}
+              onPress={handleNextStep}
               disabled={currentRecipeStep === selectedRecipe.instructions.length - 1}
               className="flex items-center gap-1"
             >
